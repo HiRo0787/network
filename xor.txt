@@ -1,0 +1,100 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from typing import Tuple, List
+
+
+
+def sigmoid(x) -> np.ndarray:
+    return 1 / (1 + np.exp(-x))
+
+def sigmoid_derivative(x) -> np.ndarray:
+    return x * (1 - x)
+
+
+
+def xor(inputs: Tuple[int, int]) -> np.ndarray:
+    return np.array([int(inputs[0] != inputs[1])])
+
+
+
+input_data = np.array(
+    [
+        [0, 0],
+        [0, 1],
+        [1, 0],
+        [1, 1]
+    ]
+)
+
+target_data = np.array(
+    [
+        [0],
+        [1],
+        [1],
+        [0]
+    ]
+)
+
+
+
+input_nodes = 2
+hidden_nodes = 2
+output_nodes = 1
+learning_rate = 0.1
+epochs = 10 ** 5 - 1
+
+# Initializing random weights and bias
+hidden_weights = np.random.uniform(size=(input_nodes, hidden_nodes))
+hidden_bias = np.random.uniform(size=(1, hidden_nodes))
+output_weights = np.random.uniform(size=(hidden_nodes, output_nodes))
+output_bias = np.random.uniform(size=(1, output_nodes))
+
+
+
+error_per_epoch: List[float] = list()
+for _ in range(epochs):
+    # Forward Propagation
+    hidden_layer_activation = np.dot(input_data, hidden_weights)
+    hidden_layer_activation += hidden_bias
+    hidden_layer_output = sigmoid(hidden_layer_activation)
+
+    output_layer_activation = np.dot(hidden_layer_output, output_weights)
+    output_layer_activation += output_bias
+    predicted_output = sigmoid(output_layer_activation)
+
+    # Backpropagation
+    error = target_data - predicted_output
+    d_predicted_output = error * sigmoid_derivative(predicted_output)
+
+    error_hidden_layer = d_predicted_output.dot(output_weights.T)
+    d_hidden_layer = error_hidden_layer \
+        * sigmoid_derivative(hidden_layer_output)
+
+    # Updating Weights and Biases
+    output_weights += hidden_layer_output.T.dot(d_predicted_output) \
+        * learning_ratelearning_rate
+    output_bias += np.sum(d_predicted_output, axis=0, keepdims=True) \
+        * learning_rate
+    hidden_weights += input_data.T.dot(d_hidden_layer) \
+        * learning_rate
+    hidden_bias += np.sum(d_hidden_layer, axis=0, keepdims=True) \
+        * learning_rate
+
+    # Saving the current epoch error for plotting later
+    error_per_epoch.append(error[1])
+
+
+
+
+
+plt.figure(figsize=(10, 10))
+plt.title('Epoch vs Error')
+plt.plot(np.arange(1, epochs + 1), np.array(error_per_epoch))
+plt.xlabel('Epochs')
+plt.ylabel('Error')
+plt.show()
+
+
+
+print(f'The output from the neural network after {epochs} epochs is',
+      *predicted_output)

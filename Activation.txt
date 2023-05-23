@@ -1,0 +1,61 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+
+data = np.linspace(-20, 20, 100)
+
+
+
+def plot_function(x, y, x_label='', y_label='', name=''):
+    plt.figure(figsize=(10, 10))
+    plt.title(f'{name} Activation Function')
+    plt.plot(x, y)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.axvline(x=0)
+    plt.axhline(y=0)
+    plt.show()
+
+
+plot_function(x=data,
+              y=data,
+              x_label='x',
+              y_label='f(x)',
+              name='Linear')
+
+
+
+plot_function(x=data,
+              y=data * (data > 0),
+              x_label='x',
+              y_label='ReLU(x)',
+              name='Relu')
+
+
+
+
+plot_function(x=data,
+              y=np.exp(data - data.max()) /
+              np.sum(np.exp(data - data.max())),
+              x_label='x',
+              y_label='softmax(x)',
+              name='Softmax')
+
+
+
+
+plot_function(x=data,
+              y=1 / (1 + np.exp(-data)),
+              x_label='x',
+              y_label='sigmoid(x)',
+              name='Sigmoid')
+
+
+
+plot_function(x=data,
+              y=(np.exp(data) - np.exp(-data)) /
+              (np.exp(data) + np.exp(-data)),
+              x_label='x',
+              y_label='tanh(x)',
+              name='tanh')
