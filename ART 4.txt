@@ -1,0 +1,44 @@
+class ART1:
+    def __init__(self, num_features, vigilance):
+        self.num_features = num_features
+        self.vigilance = vigilance
+        self.weights = np.zeros((1, num_features))
+        self.category = -1
+
+    def train(self, x):
+        while True:
+            net = np.dot(self.weights, x)
+            rho = np.sum(net) / self.num_features
+            if rho >= self.vigilance:
+                self.weights = np.vstack((self.weights, x))
+                self.category += 1
+                break
+            else:
+                x = np.multiply(x, net)
+                if np.sum(x) == 0:
+                    break
+    def predict(self, x):
+        net = np.dot(self.weights, x)
+        rho = np.sum(net) / self.num_features
+        if rho >= self.vigilance:
+            return self.category
+        else:
+            return -1
+
+
+----------------------------------------------------------------
+
+art = ART1(6, 0.5)
+
+------------------------------------------------------------------
+
+art.train(np.array([1, 1, 0, 0, 1, 0]))
+art.train(np.array([0, 0, 1, 1, 0, 1]))
+
+-----------------------------------------------------------------
+
+category = art.predict(np.array([1,0,1,0,1,1]))
+print(category)
+
+
+
